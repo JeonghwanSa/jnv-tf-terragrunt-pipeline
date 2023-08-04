@@ -1,8 +1,3 @@
-resource "aws_codecommit_repository" "repository" {
-  repository_name = var.repository_name
-  description     = "${var.repository_name}-mirror"
-}
-
 resource "aws_s3_bucket" "codepipeline_bucket" {
   bucket = join("-", [lower("${var.aws_account_alias}"), "pipelineartifact"])
 }
@@ -78,16 +73,13 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
         Resource = "*"
       },
       {
+        Effect = "Allow",
         Action = [
-          "codecommit:CancelUploadArchive",
-          "codecommit:GetBranch",
-          "codecommit:GetCommit",
-          "codecommit:GetRepository",
-          "codecommit:GetUploadArchiveStatus",
-          "codecommit:UploadArchive"
+          "codestar-connections:UseConnection"
         ],
-        Resource = "*",
-        Effect   = "Allow"
+        Resource = [
+          "${var.github_connection_arn}"
+        ]
       }
     ]
   })
@@ -106,14 +98,14 @@ resource "aws_codepipeline" "terragrunt_pipeline" {
       name             = "FetchCode"
       category         = "Source"
       owner            = "AWS"
-      provider         = "CodeCommit"
+      provider         = "CodeStarSourceConnection"
       version          = "1"
       run_order        = 1
       output_artifacts = ["SourceArtifact"]
       configuration = {
-        RepositoryName       = var.repository_name
-        BranchName           = var.pipeline_branch
-        PollForSourceChanges = true
+        ConnectionArn    = var.github_connection_arn
+        FullRepositoryId = var.github_fullrepository_id
+        BranchName       = var.pipeline_branch
       }
     }
   }
@@ -170,7 +162,7 @@ resource "aws_codepipeline" "terragrunt_pipeline" {
 }
 
 resource "aws_iam_role" "codebuild" {
-  name = join("-", [var.repository_name, "codebuild_role"])
+  name = join("-", [var.aws_account_alias, "codebuild_role"])
 
   assume_role_policy = <<EOF
 {

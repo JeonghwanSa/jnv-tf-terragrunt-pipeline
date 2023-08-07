@@ -86,7 +86,7 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
 }
 
 resource "aws_codepipeline" "terragrunt_pipeline" {
-  name     = join("-", ["${var.aws_account_alias}", "TF"])
+  name     = join("-", ["inf", "${var.jnv_region}", "${var.aws_account_alias}", "pipeline", "${var.jnv_environment}"])
   role_arn = aws_iam_role.codepipeline_role.arn
   artifact_store {
     location = aws_s3_bucket.codepipeline_bucket.bucket

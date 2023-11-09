@@ -6,6 +6,16 @@ variable "jnv_environment" {
   default = "dev"
 }
 variable "pipeline_branch" {}
+
+variable "build_image" {
+  default = "aws/codebuild/amazonlinux2-x86_64-standard:4.0"
+}
+variable "build_image_pull_credentials_type" {
+  default = "CODEBUILD"
+}
+variable "build_privileged_mode" {
+  default = true
+}
 variable "build_compute_size" {
   default = "BUILD_GENERAL1_LARGE"
 }

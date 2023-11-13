@@ -218,6 +218,11 @@ resource "aws_codebuild_project" "terragrunt_build_plan" {
     }
   }
 
+  cache {
+    modes = var.build_cache_config.modes
+    type  = var.build_cache_config.type
+  }
+
   source {
     git_clone_depth     = 0
     insecure_ssl        = false
@@ -258,6 +263,11 @@ resource "aws_codebuild_project" "terragrunt_build_apply" {
       encryption_disabled = false
       status              = "DISABLED"
     }
+  }
+
+  cache {
+    modes = var.build_cache_config.modes
+    type  = var.build_cache_config.type
   }
 
   source {

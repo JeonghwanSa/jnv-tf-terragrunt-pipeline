@@ -21,3 +21,14 @@ variable "build_compute_size" {
 }
 variable "github_connection_arn" {}
 variable "github_fullrepository_id" {}
+
+variable "build_cache_config" {
+  type = object({
+    modes = any
+    type  = string
+  })
+  default = {
+    modes = null
+    type  = "NO_CACHE"
+  }
+}

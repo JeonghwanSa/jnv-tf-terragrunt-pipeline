@@ -32,3 +32,12 @@ variable "build_cache_config" {
     type  = "NO_CACHE"
   }
 }
+
+variable "need_plan" {
+  type    = bool
+  default = true
+}
+variable "need_approval" {
+  type    = bool
+  default = true
+}

@@ -109,37 +109,37 @@ resource "aws_codepipeline" "terragrunt_pipeline" {
       }
     }
   }
-  stage {
-    name = "TerraformPlan"
-    action {
-      category = "Build"
-      configuration = {
-        "ProjectName" = "${aws_codebuild_project.terragrunt_build_plan.name}"
+  dynamic "stage" {
+    for_each = var.need_plan == true ? [1] : []
+    content {
+      name = "TerraformPlan"
+      action {
+        category = "Build"
+        configuration = {
+          "ProjectName" = "${aws_codebuild_project.terragrunt_build_plan.name}"
+        }
+        input_artifacts = [
+          "SourceArtifact",
+        ]
+        name      = "Plan"
+        owner     = "AWS"
+        provider  = "CodeBuild"
+        run_order = 1
+        version   = "1"
       }
-      input_artifacts = [
-        "SourceArtifact",
-      ]
-      name      = "Plan"
-      owner     = "AWS"
-      provider  = "CodeBuild"
-      run_order = 1
-      version   = "1"
     }
   }
-  stage {
-    name = "Approval"
-    action {
-      name     = "Approval"
-      category = "Approval"
-      owner    = "AWS"
-      provider = "Manual"
-      version  = "1"
-
-      # configuration {
-      #   NotificationArn    = var.approve_sns_arn
-      #   CustomData         = var.approve_comment
-      #   ExternalEntityLink = var.approve_url
-      # }
+  dynamic "stage" {
+    for_each = var.need_approval == true ? [1] : []
+    content {
+      name = "Approval"
+      action {
+        name     = "Approval"
+        category = "Approval"
+        owner    = "AWS"
+        provider = "Manual"
+        version  = "1"
+      }
     }
   }
   stage {

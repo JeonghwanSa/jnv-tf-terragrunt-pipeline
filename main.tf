@@ -110,6 +110,19 @@ resource "aws_codepipeline" "terragrunt_pipeline" {
     }
   }
   dynamic "stage" {
+    for_each = var.need_plan_approval == true ? [1] : []
+    content {
+      name = "Plan Approval"
+      action {
+        name     = "Approval"
+        category = "Approval"
+        owner    = "AWS"
+        provider = "Manual"
+        version  = "1"
+      }
+    }
+  }
+  dynamic "stage" {
     for_each = var.need_plan == true ? [1] : []
     content {
       name = "TerraformPlan"

@@ -33,6 +33,10 @@ variable "build_cache_config" {
   }
 }
 
+variable "need_plan_approval" {
+  type    = bool
+  default = false
+}
 variable "need_plan" {
   type    = bool
   default = true

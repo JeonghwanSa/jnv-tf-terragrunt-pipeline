@@ -32,7 +32,15 @@ variable "build_cache_config" {
     type  = "NO_CACHE"
   }
 }
-
+variable "codebuild_vpc_id" {
+  default = ""
+}
+variable "codebuild_vpc_subnets" {
+  default = ["", ""]
+}
+variable "codebuild_vpc_sg" {
+  default = [""]
+}
 variable "need_plan_approval" {
   type    = bool
   default = false

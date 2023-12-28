@@ -243,6 +243,15 @@ resource "aws_codebuild_project" "terragrunt_build_plan" {
     type                = "CODEPIPELINE"
     buildspec           = "buildspec.plan.yml"
   }
+
+  dynamic "vpc_config" {
+    for_each = var.codebuild_vpc_id != "" ? [1] : []
+    content {
+      security_group_ids = var.codebuild_vpc_sg
+      subnets            = var.codebuild_vpc_subnets
+      vpc_id             = var.codebuild_vpc_id
+    }
+  }
 }
 
 resource "aws_codebuild_project" "terragrunt_build_apply" {
@@ -289,5 +298,14 @@ resource "aws_codebuild_project" "terragrunt_build_apply" {
     report_build_status = false
     type                = "CODEPIPELINE"
     buildspec           = "buildspec.apply.yml"
+  }
+
+  dynamic "vpc_config" {
+    for_each = var.codebuild_vpc_id != "" ? [1] : []
+    content {
+      security_group_ids = var.codebuild_vpc_sg
+      subnets            = var.codebuild_vpc_subnets
+      vpc_id             = var.codebuild_vpc_id
+    }
   }
 }
